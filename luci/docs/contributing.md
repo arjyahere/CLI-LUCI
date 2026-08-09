@@ -44,7 +44,7 @@ luci/
 ├── crates/
 │   ├── luci-common/     # Shared types — edit here for type changes
 │   ├── luci-cli/        # CLI — edit here for new commands
-│   ├── lucid/           # Daemon — edit here for daemon behavior
+│   ├── lucid/           # Daemon library/crate — daemon behavior
 │   ├── luci-protocol/   # Wire protocol — edit here for message types
 │   └── luci-runtime/    # Runtime — edit here for execution logic
 ├── sdks/

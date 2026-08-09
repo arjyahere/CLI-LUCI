@@ -82,7 +82,7 @@ User doesn't know or care which device executed the job.
 │       │                                                     │
 │       │  TCP:9527  Length-prefixed JSON + Auth Token        │
 │       ▼                                                     │
-│   lucid (Daemon)                                            │
+│   luci (daemon mode)                                            │
 │       │                                                     │
 │       ├── IpcServer ............. handles CLI commands      │
 │       ├── ResourceCollector ..... sysinfo + nvidia-smi      │
@@ -102,7 +102,7 @@ User doesn't know or care which device executed the job.
 ┌──────────────────────────────▼──────────────────────────────┐
 │                        Machine B                            │
 │                                                             │
-│   lucid (Daemon)                                            │
+│   luci (daemon mode)                                            │
 │       │                                                     │
 │       ├── IpcServer                                     │
 │       ├── ResourceCollector                             │
@@ -133,7 +133,7 @@ luci-common          (shared types, IPC, config)
     │       │
     │       └──▶ luci-runtime    (buffer, executor)
     │               │
-    │               └──▶ lucid           (daemon binary)
+    │               └──▶ luci --internal-daemon (daemon mode)
     │
     └──▶ luci-cli        (CLI binary)
 ```

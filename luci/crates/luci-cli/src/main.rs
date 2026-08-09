@@ -57,7 +57,11 @@ enum Commands {
     },
 
     /// List all devices in the network
-    Devices,
+    Devices {
+        /// Refresh continuously
+        #[arg(short, long)]
+        watch: bool,
+    },
 
     /// Show device details
     Device {
@@ -279,13 +283,6 @@ async fn main() {
             fn SetConsoleCP(wCodePageID: u32) -> i32;
         }
         unsafe { SetConsoleOutputCP(65001); SetConsoleCP(65001); }
-        if !is_internal {
-            unsafe extern "system" {
-                fn SetConsoleCtrlHandler(handler: Option<unsafe extern "system" fn(u32) -> i32>, add: i32) -> i32;
-            }
-            unsafe extern "system" fn ctrl_handler(_: u32) -> i32 { 1 }
-            unsafe { SetConsoleCtrlHandler(Some(ctrl_handler), 1); }
-        }
     }
     let default_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
@@ -345,6 +342,14 @@ async fn run() -> anyhow::Result<i32> {
         Some(cmd) => dispatch_command(cmd, &client, port).await,
         None => {
             if std::io::stdin().is_terminal() {
+                #[cfg(windows)]
+                {
+                    unsafe extern "system" {
+                        fn SetConsoleCtrlHandler(handler: Option<unsafe extern "system" fn(u32) -> i32>, add: i32) -> i32;
+                    }
+                    unsafe extern "system" fn ctrl_handler(_: u32) -> i32 { 1 }
+                    unsafe { SetConsoleCtrlHandler(Some(ctrl_handler), 1); }
+                }
                 display::print_banner();
                 first_run_setup();
                 ensure_daemon_running(&client, port).await;
@@ -363,7 +368,7 @@ async fn dispatch_command(cmd: Commands, client: &IpcClient, _port: u16) -> anyh
         Commands::Create { name } => commands::create::execute(client, &name).await,
         Commands::Join { invite_code } => commands::join::execute(client, &invite_code).await,
         Commands::Leave { name } => commands::leave::execute(client, name.as_deref()).await,
-        Commands::Devices => commands::devices::execute(client).await,
+        Commands::Devices { watch } => commands::devices::execute(client, watch).await,
         Commands::Device { name } => commands::device::execute(client, &name).await,
         Commands::Resources => commands::resources::execute(client).await,
         Commands::Run {

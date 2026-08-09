@@ -253,7 +253,7 @@ The daemon auto-configures Windows firewall rules on startup.
 ### Common Issues
 
 **Connection refused on port 9527:**
-- Daemon not running → `lucid` or `luci start`
+- Daemon not running → `luci` or `luci start`
 
 **Cannot connect to remote node:**
 - Firewall blocking port 9528

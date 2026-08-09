@@ -55,8 +55,8 @@ pub async fn execute(client: &IpcClient, filter: Option<&str>, follow: bool) -> 
         } else {
             display::print_info("No recent logs available.");
             println!();
-            println!("  {}Usage:{}  {}luci logs --follow{}               Stream all logs", display::DIM, display::RESET, display::CYAN, display::RESET);
-            println!("  {}        {}  {}luci logs --follow --filter warn{}  Filter by level", display::DIM, display::RESET, display::CYAN, display::RESET);
+            println!("  {}Usage:{}  {}/logs --follow{}               Stream all logs", display::DIM, display::RESET, display::CYAN, display::RESET);
+            println!("  {}        {}  {}/logs --follow --filter warn{}  Filter by level", display::DIM, display::RESET, display::CYAN, display::RESET);
         }
 
         println!();

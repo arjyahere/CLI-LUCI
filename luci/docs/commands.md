@@ -124,7 +124,7 @@ cargo build --release
 
 # Verify binaries
 ls target/release/luci.exe    # CLI
-ls target/release/lucid.exe   # Daemon
+ls target/release/luci.exe   # Daemon
 ```
 
 #### Step 3: Run Tests
@@ -146,8 +146,8 @@ cargo test -p lucid
 
 ```bash
 # Terminal 1: Start daemon
-target/release/lucid.exe      # Windows
-./target/release/lucid        # Linux/macOS
+target/release/luci.exe      # Windows
+./target/release/luci        # Linux/macOS
 
 # Or via CLI
 luci start
@@ -711,7 +711,7 @@ luci start
 **Internal flow:**
 1. Check if daemon already running via IpcCommand::Ping
 2. If running: "Daemon is already running."
-3. If not: Spawn lucid process
+3. If not: Spawn luci process (--internal-daemon)
 4. Wait 500ms for startup
 5. Verify daemon is responding
 
@@ -747,7 +747,7 @@ View daemon logs with filter and follow support.
 ```bash
 # Show log info
 luci logs
-# Log directory:    /var/log/lucid
+# Log directory:    ~/.luci/logs
 # Log level:        info
 #
 # Log streaming requires --follow flag.

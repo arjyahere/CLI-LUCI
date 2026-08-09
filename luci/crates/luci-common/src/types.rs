@@ -331,12 +331,18 @@ impl fmt::Display for NodeStatus {
     }
 }
 
+fn default_connected_at() -> DateTime<Utc> {
+    Utc::now()
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NodeState {
     pub info: NodeInfo,
     pub status: NodeStatus,
     pub resources: Option<ResourceSnapshot>,
     pub last_heartbeat: DateTime<Utc>,
+    #[serde(default = "default_connected_at")]
+    pub connected_at: DateTime<Utc>,
 }
 
 impl NodeState {

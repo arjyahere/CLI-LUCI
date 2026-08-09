@@ -485,6 +485,7 @@ fn test_node_scoring() {
             temperature_c: Some(42.0),
         }),
         last_heartbeat: chrono::Utc::now(),
+        connected_at: chrono::Utc::now(),
     };
 
     assert!(node.is_available());

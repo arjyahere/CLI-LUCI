@@ -16,9 +16,8 @@ if not exist "%INSTALL_DIR%" (
 REM Copy binaries from build output
 set "BUILD_DIR=%~dp0..\target\release"
 if exist "%BUILD_DIR%\luci.exe" (
-    echo Installing luci and lucid to %INSTALL_DIR%...
+    echo Installing luci to %INSTALL_DIR%...
     copy /Y "%BUILD_DIR%\luci.exe" "%INSTALL_DIR%\luci.exe" >nul
-    copy /Y "%BUILD_DIR%\lucid.exe" "%INSTALL_DIR%\lucid.exe" >nul
 ) else (
     echo Build not found. Run 'cargo build --release' first.
     pause

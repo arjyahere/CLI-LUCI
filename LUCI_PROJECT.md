@@ -69,7 +69,7 @@ Modern personal computers are underutilized. Most sit idle 80% of the time, yet 
 ```
 Your Laptop (CLI)
        │
-    lucid (Daemon)
+    luci (Unified CLI + daemon)
        │
   ═══════════════════════════════
     Encrypted Mesh Network
@@ -109,7 +109,7 @@ Your Laptop (CLI)
                     └────────┬────────┘
                              │ IPC / Named Pipe
                     ┌────────▼────────┐
-                    │  lucid (Daemon) │
+                    │  luci (daemon)  │
                     │   Core Process  │
                     └────────┬────────┘
                              │
@@ -139,7 +139,7 @@ Your Laptop (CLI)
 ### Internal Component Architecture
 
 ```
-                    lucid
+                    luci
                       │
         ┌─────────────┼─────────────┐
         │             │             │
@@ -173,7 +173,7 @@ CLI (luci)
   └── Send to daemon via IPC
       │
       ▼
-Daemon (lucid)
+Daemon (luci internal daemon mode)
   │
   ├── Receive job
   ├── Check resource requirements
@@ -232,7 +232,7 @@ CLI (luci)
 
 **Binary Size:** ~5-10 MB
 
-### 2. lucid (Daemon)
+### 2. luci daemon mode (internal)
 
 **Role:** Core process. The operating system of Luci.
 
@@ -320,11 +320,11 @@ curl -fsSL https://luci.dev/install.sh | bash
 ### What Happens During Install
 
 ```
-1. Download luci + lucid binaries
+1. Download luci binary
 2. Install to /usr/local/bin (Linux/macOS)
    or C:\Program Files\Luci (Windows)
 3. Register system service
-4. Start lucid daemon
+4. Start luci (auto-starts daemon)
 5. Generate node keys
 6. Ready
 ```
@@ -335,7 +335,7 @@ curl -fsSL https://luci.dev/install.sh | bash
 luci --version
 # luci 0.1.0
 
-lucid status
+luci status
 # Status: Running
 # Node ID: 8f3a1c4d-...
 ```
@@ -994,14 +994,14 @@ cargo test
 cargo build --release --bin luci
 
 # Build daemon
-cargo build --release --bin lucid
+cargo build --release -p luci
 ```
 
 ### Development Commands
 
 ```bash
 # Start daemon in development mode
-cargo run --bin lucid -- --dev
+cargo run -p luci -- --internal-daemon
 
 # Run CLI against local daemon
 cargo run --bin luci -- resources
@@ -1010,7 +1010,7 @@ cargo run --bin luci -- resources
 cargo test
 
 # Run with logging
-RUST_LOG=debug cargo run --bin lucid
+RUST_LOG=debug cargo run -p luci -- --internal-daemon
 ```
 
 ---
@@ -1072,7 +1072,7 @@ luci/
 │   │           ├── mod.rs
 │   │           └── format.rs
 │   │
-│   ├── lucid/                    # Daemon binary
+│   ├── lucid/                    # Daemon library/crate
 │   │   ├── Cargo.toml
 │   │   └── src/
 │   │       ├── main.rs

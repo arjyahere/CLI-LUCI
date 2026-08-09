@@ -155,6 +155,16 @@ pub fn format_bytes(bytes: u64) -> String {
     }
 }
 
+/// Format duration as HH:MM:SS:MS
+pub fn format_hms_ms(total_ms: u64) -> String {
+    let ms = total_ms % 1000;
+    let total_secs = total_ms / 1000;
+    let s = total_secs % 60;
+    let m = (total_secs / 60) % 60;
+    let h = total_secs / 3600;
+    format!("{:02}:{:02}:{:02}:{:03}", h, m, s, ms)
+}
+
 /// Format duration to human readable
 pub fn format_duration(secs: u64) -> String {
     let days = secs / 86400;
@@ -175,14 +185,14 @@ pub fn format_duration(secs: u64) -> String {
 
 /// Format job status with color and icon
 pub fn format_job_status(status: &str) -> String {
-    match status {
-        "Running" => format!("{}{}> Running{}", GREEN, BOLD, RESET),
-        "Completed" => format!("{}{}OK Completed{}", GREEN, BOLD, RESET),
-        "Failed" => format!("{}{}X Failed{}", RED, BOLD, RESET),
-        "Cancelled" => format!("{}{}■ Cancelled{}", YELLOW, BOLD, RESET),
-        "Scheduled" => format!("{}{}o Scheduled{}", BLUE, BOLD, RESET),
-        "Pending" => format!("{}{}◌ Pending{}", GRAY, BOLD, RESET),
-        _ => format!("{}{}?{}", GRAY, BOLD, RESET),
+    match status.to_lowercase().as_str() {
+        "running" => format!("{}{}> Running{}", GREEN, BOLD, RESET),
+        "completed" => format!("{}{}OK Completed{}", GREEN, BOLD, RESET),
+        "failed" => format!("{}{}X Failed{}", RED, BOLD, RESET),
+        "cancelled" | "canceled" => format!("{}{}* Cancelled{}", YELLOW, BOLD, RESET),
+        "scheduled" => format!("{}{}o Scheduled{}", BLUE, BOLD, RESET),
+        "pending" | "transferring" => format!("{}{}o Pending{}", GRAY, BOLD, RESET),
+        _ => format!("{}{}* {}{}", GRAY, BOLD, status, RESET),
     }
 }
 
@@ -315,7 +325,7 @@ mod tests {
         assert!(format_node_status("Idle").contains("Online"));
         assert!(format_node_status("Busy").contains("Busy"));
         assert!(format_node_status("Offline").contains("Offline"));
-        assert!(format_node_status("Unknown").contains("?"));
+        assert!(format_node_status("Unknown").contains("Unknown"));
     }
 
     #[test]

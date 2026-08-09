@@ -212,6 +212,8 @@ impl IpcServer {
                     .map(|node| {
                         let r = node.resources.as_ref();
                         let connected_ip = daemon.network.peers.get(&node.info.node_id.to_string()).map(|p| p.addr.to_string());
+                        let connected_ms = chrono::Utc::now().signed_duration_since(node.connected_at).num_milliseconds().max(0) as u64;
+                        let connected_secs = connected_ms / 1000;
                         serde_json::json!({
                             "node_id": node.info.node_id.to_string(),
                             "name": node.info.name,
@@ -220,6 +222,8 @@ impl IpcServer {
                             "ip": node.info.ip_address,
                             "mac_address": node.info.mac_address,
                             "connected_ip": connected_ip,
+                            "connected_at_ms": node.connected_at.timestamp_millis().max(0) as u64,
+                            "connected_secs": connected_secs,
                             "status": node.status.to_string(),
                             "cpu_cores": r.map(|r| r.cpu.cores).unwrap_or(0),
                             "cpu_load": r.map(|r| r.cpu.load_percent).unwrap_or(0.0),

@@ -236,6 +236,7 @@ impl Daemon {
                     status: NodeStatus::Online,
                     resources: None,
                     last_heartbeat: chrono::Utc::now(),
+                    connected_at: chrono::Utc::now(),
                 },
             );
         }
@@ -354,6 +355,7 @@ impl Daemon {
                             status: NodeStatus::Online,
                             resources: None,
                             last_heartbeat: chrono::Utc::now(),
+                            connected_at: chrono::Utc::now(),
                         },
                     );
 
@@ -457,6 +459,7 @@ impl Daemon {
                             status: NodeStatus::Online,
                             resources: None,
                             last_heartbeat: chrono::Utc::now(),
+                            connected_at: chrono::Utc::now(),
                         });
                     }
                 }
@@ -731,6 +734,7 @@ impl Daemon {
                 status: NodeStatus::Online,
                 resources: None,
                 last_heartbeat: chrono::Utc::now(),
+                connected_at: chrono::Utc::now(),
             },
         );
 

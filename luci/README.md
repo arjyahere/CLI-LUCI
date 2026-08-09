@@ -64,8 +64,7 @@ cargo build --release
 
 # Binaries are at:
 #   target/release/luci.exe   (CLI, 2.24 MB)
-#   target/release/lucid.exe  (Daemon, 3.03 MB)
-```
+#   ```
 
 ### Install (pre-built)
 
@@ -80,8 +79,8 @@ powershell -ExecutionPolicy Bypass -File install\install.ps1
 ### Start and Use
 
 ```bash
-# Terminal 1: Start daemon
-lucid
+# Start interactive CLI (auto-starts daemon)
+luci
 
 # Terminal 2: Use CLI
 luci status                  # Check daemon is running
@@ -163,7 +162,7 @@ luci logs --follow --filter warn    # Filter by level
 ```bash
 # Setup (once)
 # On each computer:
-lucid
+luci
 
 # On Computer 1:
 luci create home
@@ -236,7 +235,7 @@ Computer 1                    Computer 2                    Computer 3
 ## Architecture
 
 ```
-luci (CLI)                    lucid (Daemon)
+luci (Unified CLI + daemon)
     │                              │
     │  TCP:9527 (IPC)              │
     ├─────────────────────────────▶│
@@ -274,7 +273,7 @@ luci/                          # Workspace root
 │   │       ├── ipc_client.rs  # TCP client to daemon
 │   │       └── commands/      # 22 command modules
 │   │
-│   ├── lucid/                 # Daemon binary
+│   ├── lucid/                 # Daemon library/crate
 │   │   └── src/
 │   │       ├── main.rs        # Daemon entry, dual logging (file + stdout), firewall setup
 │   │       ├── ipc_server.rs  # Handles IPC from CLI, auth validation
@@ -521,7 +520,7 @@ See [docs/security.md](docs/security.md) for full security model.
 |-------|-------|-------------|
 | luci-common | 12 | NodeId, JobId, InviteCode, Config, Metrics |
 | luci-cli | 49 | parse_bytes, detect_job_type, display formatting, IPC client |
-| lucid (lib) | 6 | IPC commands, metrics, distributed execution |
+| lucid (daemon lib) | 6 | IPC commands, metrics, distributed execution |
 | lucid (multi-node) | 21 | Protocol simulation for 3-node scenarios |
 | lucid (integration) | 26 | Distributed tests, real daemon integration |
 | **Total** | **114** | All passing |

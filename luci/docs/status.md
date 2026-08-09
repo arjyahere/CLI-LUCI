@@ -222,7 +222,7 @@ luci run cmd -- /C "echo hello"            ✅  Exit code 0 (Windows)
 ### Release Binaries
 
 - `luci.exe`: 2.24 MB (release, optimized)
-- `lucid.exe`: 3.03 MB (release, optimized)
+- `luci.exe`: 3.03 MB (release, optimized)
 - Build with `cargo build --release`
 - CI builds for Linux, Windows, macOS (x86_64)
 

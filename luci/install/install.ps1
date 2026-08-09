@@ -26,9 +26,7 @@ if (!(Test-Path $InstallDir)) {
 # Copy binaries
 Write-Host "Installing to $InstallDir..." -ForegroundColor Yellow
 Copy-Item "$BuildDir\luci.exe" "$InstallDir\luci.exe" -Force
-Copy-Item "$BuildDir\lucid.exe" "$InstallDir\lucid.exe" -Force
 Write-Host "  Copied luci.exe" -ForegroundColor Green
-Write-Host "  Copied lucid.exe" -ForegroundColor Green
 
 # Add to user PATH
 $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
@@ -49,24 +47,24 @@ try {
     Remove-NetFirewallRule -DisplayName "Luci UDP Discovery" -ErrorAction SilentlyContinue
     Remove-NetFirewallRule -DisplayName "Luci Daemon" -ErrorAction SilentlyContinue
 
-    # Allow lucid.exe to accept inbound TCP connections on port 9528
-    New-NetFirewallRule -DisplayName "Luci Daemon" -Direction Inbound -Action Allow -Program "$InstallDir\lucid.exe" -Protocol TCP -LocalPort 9528 -Profile Private
+    # Allow luci.exe to accept inbound TCP connections on port 9528
+    New-NetFirewallRule -DisplayName "Luci Daemon" -Direction Inbound -Action Allow -Program "$InstallDir\luci.exe" -Protocol TCP -LocalPort 9528 -Profile Private
     Write-Host "  Added rule: Luci Daemon (TCP:9528)" -ForegroundColor Green
 
     # Allow UDP broadcast on port 9529 for discovery
-    New-NetFirewallRule -DisplayName "Luci UDP Discovery" -Direction Inbound -Action Allow -Program "$InstallDir\lucid.exe" -Protocol UDP -LocalPort 9529 -Profile Private
+    New-NetFirewallRule -DisplayName "Luci UDP Discovery" -Direction Inbound -Action Allow -Program "$InstallDir\luci.exe" -Protocol UDP -LocalPort 9529 -Profile Private
     Write-Host "  Added rule: Luci UDP Discovery (UDP:9529)" -ForegroundColor Green
 
-    # Allow lucid.exe to send outbound connections
-    New-NetFirewallRule -DisplayName "Luci Node Communication" -Direction Outbound -Action Allow -Program "$InstallDir\lucid.exe" -Protocol TCP -RemotePort 9528 -Profile Private
+    # Allow luci.exe to send outbound connections
+    New-NetFirewallRule -DisplayName "Luci Node Communication" -Direction Outbound -Action Allow -Program "$InstallDir\luci.exe" -Protocol TCP -RemotePort 9528 -Profile Private
     Write-Host "  Added rule: Outbound TCP:9528" -ForegroundColor Green
 
-    New-NetFirewallRule -DisplayName "Luci Node Outbound UDP" -Direction Outbound -Action Allow -Program "$InstallDir\lucid.exe" -Protocol UDP -RemotePort 9529 -Profile Private
+    New-NetFirewallRule -DisplayName "Luci Node Outbound UDP" -Direction Outbound -Action Allow -Program "$InstallDir\luci.exe" -Protocol UDP -RemotePort 9529 -Profile Private
     Write-Host "  Added rule: Outbound UDP:9529" -ForegroundColor Green
 } catch {
     Write-Host "  Firewall rules skipped (run as Admin for auto-setup)" -ForegroundColor Yellow
     Write-Host "  Or run manually:" -ForegroundColor Yellow
-    Write-Host '    netsh advfirewall firewall add rule name="Luci" dir=in action=allow program="C:\luci\lucid.exe"' -ForegroundColor Gray
+    Write-Host '    netsh advfirewall firewall add rule name="Luci" dir=in action=allow program="C:\luci\luci.exe"' -ForegroundColor Gray
 }
 
 Write-Host ""
@@ -75,12 +73,12 @@ Write-Host "  Done!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  On THIS machine:" -ForegroundColor White
-Write-Host "    lucid          # Start daemon" -ForegroundColor Yellow
+Write-Host "    luci           # Start interactive CLI (auto-starts daemon)" -ForegroundColor Yellow
 Write-Host "    luci status    # Check status" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "  On ANOTHER machine:" -ForegroundColor White
-Write-Host "    1. Copy C:\luci\luci.exe and C:\luci\lucid.exe to it" -ForegroundColor Gray
+Write-Host "    1. Copy C:\luci\luci.exe to it" -ForegroundColor Gray
 Write-Host "    2. Run this same install script on that machine" -ForegroundColor Gray
-Write-Host "    3. Run: lucid" -ForegroundColor Yellow
+Write-Host "    3. Run: luci" -ForegroundColor Yellow
 Write-Host "    4. Daemons auto-discover each other!" -ForegroundColor Green
 Write-Host ""

@@ -221,6 +221,7 @@ impl NetworkManager {
                             status: luci_common::NodeStatus::Online,
                             resources: None,
                             last_heartbeat: chrono::Utc::now(),
+                            connected_at: chrono::Utc::now(),
                         },
                     );
                     tracing::info!("Added new peer from Announce: {} ({})", node_name, addr);

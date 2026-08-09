@@ -116,6 +116,7 @@ async fn start_test_daemon(
                     temperature_c: None,
                 }),
                 last_heartbeat: chrono::Utc::now(),
+                connected_at: chrono::Utc::now(),
             },
         );
     }

@@ -15,15 +15,13 @@ fi
 
 # Create installation directory
 INSTALL_DIR="/usr/local/bin"
-echo "Installing luci and lucid to $INSTALL_DIR..."
+echo "Installing luci to $INSTALL_DIR..."
 
 # Copy binaries
 cp -f luci "$INSTALL_DIR/luci"
-cp -f lucid "$INSTALL_DIR/lucid"
 
 # Make executable
 chmod +x "$INSTALL_DIR/luci"
-chmod +x "$INSTALL_DIR/lucid"
 
 echo
 echo "========================================"

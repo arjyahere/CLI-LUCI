@@ -96,9 +96,9 @@ cargo build --release
 
 # Verify binaries exist
 ls target/debug/luci.exe      # CLI (debug)
-ls target/debug/lucid.exe     # Daemon (debug)
+ls target/debug/luci.exe     # Unified CLI + daemon (debug)
 ls target/release/luci.exe    # CLI (release, ~2.24 MB)
-ls target/release/lucid.exe   # Daemon (release, ~3.03 MB)
+ls target/release/luci.exe   # Unified CLI + daemon (release)
 ```
 
 ### Step 4: Run Tests
@@ -125,8 +125,8 @@ cargo test --all -- --nocapture
 
 ```bash
 # Terminal 1: Start daemon
-target/release/lucid.exe      # Windows
-./target/release/lucid        # Linux/macOS
+target/release/luci.exe      # Windows
+./target/release/luci        # Linux/macOS
 
 # Or use CLI command
 luci start
@@ -187,7 +187,7 @@ luci/
 │   │           ├── health.rs
 │   │           └── metrics.rs
 │   │
-│   ├── lucid/                    # Daemon binary
+│   ├── lucid/                    # Daemon library/crate
 │   │   └── src/
 │   │       ├── main.rs           # Entry point, logging, firewall
 │   │       ├── ipc_server.rs     # IPC handler
@@ -421,7 +421,7 @@ cargo build --release
 
 # Verify binary
 ls -la target/release/luci.exe
-ls -la target/release/lucid.exe
+ls -la target/release/luci.exe
 ```
 
 ---

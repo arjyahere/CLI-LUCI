@@ -58,7 +58,7 @@ When you connect 4 laptops/desktops via Luci, they become a single unified compu
 tar xzf luci-linux-amd64-v0.1.0.tar.gz
 
 # Run daemon
-./lucid
+./luci
 
 # In another terminal
 ./luci status
@@ -70,7 +70,7 @@ tar xzf luci-linux-amd64-v0.1.0.tar.gz
 Expand-Archive -Path luci-windows-amd64-v0.1.0.zip -DestinationPath C:\luci
 
 # Run daemon
-C:\luci\lucid.exe
+C:\luci\luci.exe
 
 # In another terminal
 C:\luci\luci.exe status
@@ -80,7 +80,7 @@ C:\luci\luci.exe status
 
 1. **Start the daemon** on each machine:
    ```bash
-   lucid
+   luci
    ```
 
 2. **Create a network** on the first machine:

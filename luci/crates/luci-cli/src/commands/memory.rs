@@ -38,7 +38,7 @@ pub async fn list(client: &IpcClient) -> Result<()> {
 
         if pools.is_empty() {
             display::print_info("No memory pools found.");
-            println!("  {}Create one:  {}luci memory create <name> <size_gb>{}", display::DIM, display::CYAN, display::RESET);
+            println!("  {}Create one:  {}/memory create <name> <size_gb>{}", display::DIM, display::CYAN, display::RESET);
             println!();
             return Ok(());
         }

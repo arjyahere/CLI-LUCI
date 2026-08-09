@@ -26,13 +26,13 @@ pub async fn execute(client: &IpcClient, id: &str) -> Result<()> {
         println!("  {}Node:{}       {}{}{}", display::DIM, display::RESET, display::WHITE, node, display::RESET);
         println!("  {}ID:{}         {}{}{}", display::DIM, display::RESET, display::CYAN, id, display::RESET);
         
-        if let Some(result) = result {
+        if let Some(result) = result.filter(|s: &&str| !s.is_empty()) {
             println!();
             println!("  {}{}--- Result --------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
             println!("  {}{}{}{}", display::GREEN, result, display::RESET, display::DIM);
         }
         
-        if let Some(error) = error {
+        if let Some(error) = error.filter(|s: &&str| !s.is_empty()) {
             println!();
             println!("  {}{}--- Error ---------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
             println!("  {}{}{}{}", display::RED, error, display::RESET, display::DIM);
