@@ -1003,7 +1003,7 @@ fn read_repl_line_windows(history: &[String]) -> Option<String> {
             if !is_ctrl_c { ctrl_c_armed = false; }
 
             if vk == VK_UP {
-                if !hint_labels.is_empty() {
+                if !hint_labels.is_empty() && history_pos == history.len() {
                     hint_sel = if hint_sel == 0 { hint_labels.len() - 1 } else { hint_sel - 1 };
                     clear_hint(&mut hint_line_len, &buf, cursor, sel_anchor);
                     render_hints(&hint_labels, hint_sel, &mut hint_line_len, &buf, cursor, sel_anchor);
@@ -1024,7 +1024,7 @@ fn read_repl_line_windows(history: &[String]) -> Option<String> {
                 }
             }
             if vk == VK_DOWN {
-                if !hint_labels.is_empty() {
+                if !hint_labels.is_empty() && history_pos == history.len() {
                     hint_sel = (hint_sel + 1) % hint_labels.len();
                     clear_hint(&mut hint_line_len, &buf, cursor, sel_anchor);
                     render_hints(&hint_labels, hint_sel, &mut hint_line_len, &buf, cursor, sel_anchor);
