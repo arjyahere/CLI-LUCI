@@ -67,44 +67,44 @@ pub async fn execute(client: &IpcClient, config: RunConfig) -> Result<()> {
     let box_width: usize = 60;
     let inner_width = box_width - 4;
 
-    println!("  {}{}┌{}┐{}", display::DIM, display::BOLD, "─".repeat(box_width), display::RESET);
-    println!("  {}{}│{:^inner_width$}│{}", display::DIM, display::BOLD, "JOB CONFIGURATION", display::RESET);
-    println!("  {}{}├{}┤{}", display::DIM, display::BOLD, "─".repeat(box_width), display::RESET);
-    println!("  {}{}│{:^inner_width$}│{}", display::DIM, display::BOLD, "", display::RESET);
-    println!("  {}{}│  {}Script:{}  {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::CYAN, truncate(&config.script, inner_width - 11), display::RESET);
-    println!("  {}{}│  {}Type:{}     {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, job_type, display::RESET);
+    println!("  {}{}+{}+{}", display::DIM, display::BOLD, "-".repeat(box_width), display::RESET);
+    println!("  {}{}|{:^inner_width$}|{}", display::DIM, display::BOLD, "JOB CONFIGURATION", display::RESET);
+    println!("  {}{}+{}+{}", display::DIM, display::BOLD, "-".repeat(box_width), display::RESET);
+    println!("  {}{}|{:^inner_width$}|{}", display::DIM, display::BOLD, "", display::RESET);
+    println!("  {}{}|  {}Script:{}  {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::CYAN, truncate(&config.script, inner_width - 11), display::RESET);
+    println!("  {}{}|  {}Type:{}     {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, job_type, display::RESET);
 
     if !config.args.is_empty() {
         let args_str = config.args.join(" ");
-        println!("  {}{}│  {}Args:{}     {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, truncate(&args_str, inner_width - 11), display::RESET);
+        println!("  {}{}|  {}Args:{}     {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, truncate(&args_str, inner_width - 11), display::RESET);
     }
 
     if let Some(ref ram) = config.ram {
-        println!("  {}{}│  {}RAM:{}       {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, ram, display::RESET);
+        println!("  {}{}|  {}RAM:{}       {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, ram, display::RESET);
     }
 
     if let Some(cpu) = config.cpu {
-        println!("  {}{}│  {}CPU:{}       {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, cpu, display::RESET);
+        println!("  {}{}|  {}CPU:{}       {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, cpu, display::RESET);
     }
 
     if let Some(ref node) = config.node {
-        println!("  {}{}│  {}Node:{}      {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, truncate(node, inner_width - 11), display::RESET);
+        println!("  {}{}|  {}Node:{}      {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, truncate(node, inner_width - 11), display::RESET);
     }
 
     if config.gpu {
-        println!("  {}{}│  {}GPU:{}       {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, "Required", display::RESET);
+        println!("  {}{}|  {}GPU:{}       {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, "Required", display::RESET);
     }
 
     if let Some(ref vram) = config.vram {
-        println!("  {}{}│  {}VRAM:{}      {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, vram, display::RESET);
+        println!("  {}{}|  {}VRAM:{}      {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, vram, display::RESET);
     }
 
     if let Some(timeout) = config.timeout {
-        println!("  {}{}│  {}Timeout:{}   {:<inner_width$}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, display::format_duration(timeout), display::RESET);
+        println!("  {}{}|  {}Timeout:{}   {:<inner_width$}|{}", display::DIM, display::BOLD, display::RESET, display::DIM, display::format_duration(timeout), display::RESET);
     }
 
-    println!("  {}{}│{:^inner_width$}│{}", display::DIM, display::BOLD, "", display::RESET);
-    println!("  {}{}└{}┘{}", display::DIM, display::BOLD, "─".repeat(box_width), display::RESET);
+    println!("  {}{}|{:^inner_width$}|{}", display::DIM, display::BOLD, "", display::RESET);
+    println!("  {}{}+{}+{}", display::DIM, display::BOLD, "-".repeat(box_width), display::RESET);
     println!();
 
     let response = client.send(IpcCommand::RunJob {

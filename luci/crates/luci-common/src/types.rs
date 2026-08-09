@@ -215,6 +215,8 @@ pub struct NodeInfo {
     pub os: String,
     pub arch: String,
     pub ip_address: Option<String>,
+    #[serde(default)]
+    pub mac_address: Option<String>,
     pub created_at: DateTime<Utc>,
 }
 

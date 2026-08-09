@@ -229,7 +229,8 @@ impl Daemon {
                             .unwrap_or_else(|_| "unknown".to_string()),
                         os: std::env::consts::OS.to_string(),
                         arch: std::env::consts::ARCH.to_string(),
-                        ip_address: None,
+                        ip_address: get_local_ip(),
+                        mac_address: get_local_mac(),
                         created_at: chrono::Utc::now(),
                     },
                     status: NodeStatus::Online,
@@ -347,6 +348,7 @@ impl Daemon {
                                 os: peer_os.clone(),
                                 arch: peer_arch.clone(),
                                 ip_address: Some(peer_ip.clone()),
+                        mac_address: None,
                                 created_at: chrono::Utc::now(),
                             },
                             status: NodeStatus::Online,
@@ -449,6 +451,7 @@ impl Daemon {
                                 os: peer.capabilities.os,
                                 arch: peer.capabilities.arch,
                                 ip_address: peer.direct_addresses.first().cloned(),
+                        mac_address: None,
                                 created_at: chrono::Utc::now(),
                             },
                             status: NodeStatus::Online,
@@ -722,6 +725,7 @@ impl Daemon {
                     os: std::env::consts::OS.to_string(),
                     arch: std::env::consts::ARCH.to_string(),
                     ip_address: None,
+                        mac_address: None,
                     created_at: chrono::Utc::now(),
                 },
                 status: NodeStatus::Online,
@@ -1280,4 +1284,71 @@ impl Daemon {
             }
         }
     }
+}
+
+
+fn get_local_ip() -> Option<String> {
+    #[cfg(target_os = "windows")]
+    {
+        if let Ok(output) = std::process::Command::new("ipconfig").output() {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            for line in stdout.lines() {
+                let line = line.trim();
+                if line.contains("IPv4 Address") || line.contains("IP Address") {
+                    if let Some(ip) = line.split(':').next_back() {
+                        let ip = ip.trim().trim_start_matches("(Preferred)").trim().to_string();
+                        if !ip.is_empty() && ip != "127.0.0.1" {
+                            return Some(ip);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        if let Ok(output) = std::process::Command::new("hostname").args(["-I"]).output() {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            if let Some(ip) = stdout.split_whitespace().next() {
+                if !ip.is_empty() && ip != "127.0.0.1" { return Some(ip.to_string()); }
+            }
+        }
+    }
+    None
+}
+
+fn get_local_mac() -> Option<String> {
+    #[cfg(target_os = "windows")]
+    {
+        if let Ok(output) = std::process::Command::new("getmac").args(["/fo","csv","/nh"]).output() {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            for line in stdout.lines() {
+                let line = line.trim().trim_matches('"');
+                // csv: "AA-BB-CC-DD-EE-FF","..."
+                if let Some(mac) = line.split(',').next() {
+                    let mac = mac.trim().trim_matches('"').to_string();
+                    if mac.len() == 17 && mac != "00-00-00-00-00-00" {
+                        return Some(mac);
+                    }
+                }
+            }
+        }
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        if let Ok(output) = std::process::Command::new("cat").arg("/sys/class/net/$(ls /sys/class/net | head -1)/address").output() {
+            let _ = output; // fallback below
+        }
+        if let Ok(entries) = std::fs::read_dir("/sys/class/net") {
+            for e in entries.flatten() {
+                let name = e.file_name().to_string_lossy().to_string();
+                if name == "lo" { continue; }
+                if let Ok(mac) = std::fs::read_to_string(e.path().join("address")) {
+                    let mac = mac.trim().to_string();
+                    if !mac.is_empty() && mac != "00:00:00:00:00:00" { return Some(mac); }
+                }
+            }
+        }
+    }
+    None
 }

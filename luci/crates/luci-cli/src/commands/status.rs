@@ -18,13 +18,13 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         let active_jobs = payload["active_jobs"].as_u64().unwrap_or(0);
         let total_completed = payload["total_jobs_completed"].as_u64().unwrap_or(0);
 
-        println!("  {}{}╔══════════════════════════════════════════════════════════════╗{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}║                      DAEMON STATUS                           ║{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}╚══════════════════════════════════════════════════════════════╝{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+==============================================================+{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}|                      DAEMON STATUS                           |{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+==============================================================+{}", display::DIM, display::BOLD, display::RESET);
         println!();
 
         let status_color = if running { display::GREEN } else { display::RED };
-        let status_icon = if running { "●" } else { "○" };
+        let status_icon = if running { "*" } else { "o" };
         let status_text = if running { "Running" } else { "Stopped" };
 
         println!("  {}{}{} {}Daemon:{}      {}{}{}", 
@@ -37,12 +37,12 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         println!("  {}Node ID:{}     {}{}{}", display::DIM, display::RESET, display::CYAN, &node_id[..12.min(node_id.len())], display::RESET);
         println!();
 
-        println!("  {}{}─── Network ───────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- Network -----------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!("  {}Network:{}     {}{}{}", display::DIM, display::RESET, display::WHITE, network_id, display::RESET);
         println!("  {}Connected:{}   {}{} node(s){}", display::DIM, display::RESET, display::GREEN, connected_nodes, display::RESET);
         println!();
 
-        println!("  {}{}─── Jobs ──────────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- Jobs --------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!("  {}Active:{}       {}{} jobs{}", display::DIM, display::RESET, display::YELLOW, active_jobs, display::RESET);
         println!("  {}Completed:{}    {}{} jobs{}", display::DIM, display::RESET, display::GREEN, total_completed, display::RESET);
         println!();

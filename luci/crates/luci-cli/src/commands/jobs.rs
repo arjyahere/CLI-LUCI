@@ -12,23 +12,23 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         let empty_vec = vec![];
         let jobs = payload["jobs"].as_array().unwrap_or(&empty_vec);
 
-        println!("  {}{}╔══════════════════════════════════════════════════════════════╗{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}║                        ACTIVE JOBS                           ║{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}╚══════════════════════════════════════════════════════════════╝{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+==============================================================+{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}|                        ACTIVE JOBS                           |{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+==============================================================+{}", display::DIM, display::BOLD, display::RESET);
         println!();
 
         if jobs.is_empty() {
             display::print_info("No jobs running.");
-            println!("  {}Run a job:  {}luci run <script>{}", display::DIM, display::CYAN, display::RESET);
+            println!("  {}Run a job:  {}/run <script>{}", display::DIM, display::CYAN, display::RESET);
             println!();
             return Ok(());
         }
 
         // Table header
-        println!("  {}{}┌──────────────┬────────────────────┬──────────┬────────────┬──────────────┐{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}│ {:<12} │ {:<18} │ {:<8} │ {:<10} │ {:<12} │{}", display::DIM, display::BOLD, 
+        println!("  {}{}+--------------+--------------------+----------+------------+--------------+{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}| {:<12} | {:<18} | {:<8} | {:<10} | {:<12} |{}", display::DIM, display::BOLD, 
             "ID", "NAME", "TYPE", "STATUS", "NODE", display::RESET);
-        println!("  {}{}├──────────────┼────────────────────┼──────────┼────────────┼──────────────┤{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+--------------+--------------------+----------+------------+--------------+{}", display::DIM, display::BOLD, display::RESET);
 
         for job in jobs {
             let id = job["id"].as_str().unwrap_or("unknown");
@@ -43,7 +43,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
 
             let status_display = display::format_job_status(status);
 
-            println!("  {}│ {:<12} │ {:<18} │ {:<8} │ {}{:<10}{} │ {:<12} │{}", 
+            println!("  {}| {:<12} | {:<18} | {:<8} | {}{:<10}{} | {:<12} |{}", 
                 display::DIM,
                 id_display,
                 name_display,
@@ -53,7 +53,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
                 display::RESET);
         }
 
-        println!("  {}{}└──────────────┴────────────────────┴──────────┴────────────┴──────────────┘{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+--------------+--------------------+----------+------------+--------------+{}", display::DIM, display::BOLD, display::RESET);
         println!();
         println!("  {}Total: {} job(s){}", display::DIM, jobs.len(), display::RESET);
         println!();

@@ -44,7 +44,7 @@ pub async fn list_synced(client: &IpcClient) -> Result<()> {
             let target = folder["target_node"].as_str().unwrap_or("unknown");
             let files = folder["files_synced"].as_u64().unwrap_or(0);
 
-            println!("  {}{}→{} {}  →  {}{}  ({} files)", 
+            println!("  {}{}->{} {}  ->  {}{}  ({} files)", 
                 display::CYAN, display::BOLD, display::RESET, source, display::WHITE, target, files);
         }
         println!();

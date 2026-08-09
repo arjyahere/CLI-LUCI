@@ -16,9 +16,9 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         let uptime_str = display::format_duration(uptime);
 
         let status_display = if status == "healthy" || status == "ok" {
-            format!("{}{}● Healthy{}", display::BRIGHT_GREEN, display::BOLD, display::RESET)
+            format!("{}{}* Healthy{}", display::BRIGHT_GREEN, display::BOLD, display::RESET)
         } else {
-            format!("{}{}● Unhealthy{}", display::BRIGHT_RED, display::BOLD, display::RESET)
+            format!("{}{}* Unhealthy{}", display::BRIGHT_RED, display::BOLD, display::RESET)
         };
 
         println!("  {}Status:{}     {}", display::DIM, display::RESET, status_display);

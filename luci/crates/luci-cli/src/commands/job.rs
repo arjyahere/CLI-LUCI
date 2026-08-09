@@ -28,13 +28,13 @@ pub async fn execute(client: &IpcClient, id: &str) -> Result<()> {
         
         if let Some(result) = result {
             println!();
-            println!("  {}{}─── Result ──────────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}--- Result --------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
             println!("  {}{}{}{}", display::GREEN, result, display::RESET, display::DIM);
         }
         
         if let Some(error) = error {
             println!();
-            println!("  {}{}─── Error ───────────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}--- Error ---------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
             println!("  {}{}{}{}", display::RED, error, display::RESET, display::DIM);
         }
         

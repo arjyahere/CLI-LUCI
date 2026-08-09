@@ -273,12 +273,19 @@ fn pause_if_own_console() {
 async fn main() {
     let is_internal = std::env::args().any(|a| a == "--internal-daemon");
     #[cfg(windows)]
-    if !is_internal {
+    {
         unsafe extern "system" {
-            fn SetConsoleCtrlHandler(handler: Option<unsafe extern "system" fn(u32) -> i32>, add: i32) -> i32;
+            fn SetConsoleOutputCP(wCodePageID: u32) -> i32;
+            fn SetConsoleCP(wCodePageID: u32) -> i32;
         }
-        unsafe extern "system" fn ctrl_handler(_: u32) -> i32 { 1 }
-        unsafe { SetConsoleCtrlHandler(Some(ctrl_handler), 1); }
+        unsafe { SetConsoleOutputCP(65001); SetConsoleCP(65001); }
+        if !is_internal {
+            unsafe extern "system" {
+                fn SetConsoleCtrlHandler(handler: Option<unsafe extern "system" fn(u32) -> i32>, add: i32) -> i32;
+            }
+            unsafe extern "system" fn ctrl_handler(_: u32) -> i32 { 1 }
+            unsafe { SetConsoleCtrlHandler(Some(ctrl_handler), 1); }
+        }
     }
     let default_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {

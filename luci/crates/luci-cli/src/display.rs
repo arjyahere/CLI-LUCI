@@ -25,47 +25,60 @@ pub const BRIGHT_CYAN: &str = "\x1b[96m";
 
 /// Print the Luci ASCII banner
 pub fn print_banner() {
-    println!();
-    println!("{}{}{}", CYAN, BOLD, RESET);
-    println!("  ██╗     ██╗   ██╗ ██████╗██╗");
-    println!("  ██║     ██║   ██║██╔════╝██║");
-    println!("  ██║     ██║   ██║██║     ██║");
-    println!("  ██║     ██║   ██║██║     ██║");
-    println!("  ███████╗╚██████╔╝╚██████╗██║");
-    println!("  ╚══════╝ ╚═════╝  ╚═════╝╚═╝{}{}", BOLD, RESET);
-    println!();
-    println!("  {}{}One Runtime. Infinite Resources.{}", DIM, ITALIC, RESET);
-    println!();
+    let banner = format!(
+        "\n{CYAN}{BOLD}  \u{2588}\u{2588}\u{2557}     \u{2588}\u{2588}\u{2557}   \u{2588}\u{2588}\u{2557} \u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2557}\n  \u{2588}\u{2588}\u{2551}     \u{2588}\u{2588}\u{2551}   \u{2588}\u{2588}\u{2551}\u{2588}\u{2588}\u{2554}\u{2550}\u{2550}\u{2550}\u{2550}\u{255d}\u{2588}\u{2588}\u{2551}\n  \u{2588}\u{2588}\u{2551}     \u{2588}\u{2588}\u{2551}   \u{2588}\u{2588}\u{2551}\u{2588}\u{2588}\u{2551}     \u{2588}\u{2588}\u{2551}\n  \u{2588}\u{2588}\u{2551}     \u{2588}\u{2588}\u{2551}   \u{2588}\u{2588}\u{2551}\u{2588}\u{2588}\u{2551}     \u{2588}\u{2588}\u{2551}\n  \u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2557}\u{255a}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2554}\u{255d}\u{255a}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2588}\u{2557}\u{2588}\u{2588}\u{2551}\n  \u{255a}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{255d} \u{255a}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{255d}  \u{255a}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{2550}\u{255d}\u{255a}\u{2550}\u{255d}{RESET}\n\n  {DIM}{ITALIC}One Runtime. Infinite Resources.{RESET}\n\n"
+    );
+    #[cfg(windows)]
+    {
+        use std::os::windows::ffi::OsStrExt;
+        unsafe extern "system" {
+            fn GetStdHandle(nStdHandle: u32) -> *mut std::ffi::c_void;
+            fn WriteConsoleW(hConsoleOutput: *mut std::ffi::c_void, lpBuffer: *const u16, nNumberOfCharsToWrite: u32, lpNumberOfCharsWritten: *mut u32, lpReserved: *mut std::ffi::c_void) -> i32;
+            fn GetConsoleMode(hConsoleHandle: *mut std::ffi::c_void, lpMode: *mut u32) -> i32;
+        }
+        const STD_OUTPUT_HANDLE: u32 = (-11i32) as u32;
+        unsafe {
+            let h = GetStdHandle(STD_OUTPUT_HANDLE);
+            let mut mode = 0u32;
+            if !h.is_null() && h != (-1isize) as *mut std::ffi::c_void && GetConsoleMode(h, &mut mode) != 0 {
+                let wide: Vec<u16> = std::ffi::OsStr::new(&banner).encode_wide().collect();
+                let mut written = 0u32;
+                WriteConsoleW(h, wide.as_ptr(), wide.len() as u32, &mut written, std::ptr::null_mut());
+                return;
+            }
+        }
+    }
+    print!("{}", banner);
 }
 
 /// Print a section header
 pub fn print_header(title: &str) {
     println!();
     println!("{}{}{}  {}{}", BOLD, CYAN, RESET, title, RESET);
-    println!("{}{}{}", DIM, "─".repeat(60), RESET);
+    println!("{}{}{}", DIM, "-".repeat(60), RESET);
 }
 
 /// Print a success message
 pub fn print_success(msg: &str) {
-    println!("  {}{}✓{}{} {}", GREEN, BOLD, RESET, GREEN, msg);
+    println!("  {}{}OK{}{} {}", GREEN, BOLD, RESET, GREEN, msg);
     println!("{}", RESET);
 }
 
 /// Print an error message
 pub fn print_error(msg: &str) {
-    println!("  {}{}✗{}{} {}", RED, BOLD, RESET, RED, msg);
+    println!("  {}{}X{}{} {}", RED, BOLD, RESET, RED, msg);
     println!("{}", RESET);
 }
 
 /// Print a warning message
 pub fn print_warning(msg: &str) {
-    println!("  {}{}⚠{}{} {}", YELLOW, BOLD, RESET, YELLOW, msg);
+    println!("  {}{}!{}{} {}", YELLOW, BOLD, RESET, YELLOW, msg);
     println!("{}", RESET);
 }
 
 /// Print an info message
 pub fn print_info(msg: &str) {
-    println!("  {}{}●{}{} {}", BLUE, BOLD, RESET, BLUE, msg);
+    println!("  {}{}*{}{} {}", BLUE, BOLD, RESET, BLUE, msg);
     println!("{}", RESET);
 }
 
@@ -84,16 +97,16 @@ pub fn print_kv_status(key: &str, value: &str, is_ok: bool) {
 pub fn status_indicator(status: &str) -> String {
     match status.to_lowercase().as_str() {
         "online" | "idle" | "running" | "completed" | "ok" | "healthy" => {
-            format!("{}{}●{}{}", GREEN, BOLD, RESET, GREEN)
+            format!("{}{}*{}{}", GREEN, BOLD, RESET, GREEN)
         }
         "busy" | "transferring" | "scheduled" => {
-            format!("{}{}●{}{}", YELLOW, BOLD, RESET, YELLOW)
+            format!("{}{}*{}{}", YELLOW, BOLD, RESET, YELLOW)
         }
         "offline" | "failed" | "error" | "dead" => {
-            format!("{}{}●{}{}", RED, BOLD, RESET, RED)
+            format!("{}{}*{}{}", RED, BOLD, RESET, RED)
         }
         _ => {
-            format!("{}{}○{}{}", GRAY, BOLD, RESET, GRAY)
+            format!("{}{}o{}{}", GRAY, BOLD, RESET, GRAY)
         }
     }
 }
@@ -113,13 +126,13 @@ pub fn progress_bar(value: f64, max: f64, width: usize) -> String {
     };
 
     format!(
-        "{}{}{}{}{}",
+        "{}[{}{}{}{}]",
+        DIM,
         color,
-        "█".repeat(filled),
-        RESET,
-        "░".repeat(empty),
-        RESET
-    )
+        "#".repeat(filled),
+        DIM,
+        "-".repeat(empty),
+    ) + RESET
 }
 
 /// Format bytes to human readable
@@ -163,11 +176,11 @@ pub fn format_duration(secs: u64) -> String {
 /// Format job status with color and icon
 pub fn format_job_status(status: &str) -> String {
     match status {
-        "Running" => format!("{}{}▶ Running{}", GREEN, BOLD, RESET),
-        "Completed" => format!("{}{}✓ Completed{}", GREEN, BOLD, RESET),
-        "Failed" => format!("{}{}✗ Failed{}", RED, BOLD, RESET),
+        "Running" => format!("{}{}> Running{}", GREEN, BOLD, RESET),
+        "Completed" => format!("{}{}OK Completed{}", GREEN, BOLD, RESET),
+        "Failed" => format!("{}{}X Failed{}", RED, BOLD, RESET),
         "Cancelled" => format!("{}{}■ Cancelled{}", YELLOW, BOLD, RESET),
-        "Scheduled" => format!("{}{}○ Scheduled{}", BLUE, BOLD, RESET),
+        "Scheduled" => format!("{}{}o Scheduled{}", BLUE, BOLD, RESET),
         "Pending" => format!("{}{}◌ Pending{}", GRAY, BOLD, RESET),
         _ => format!("{}{}?{}", GRAY, BOLD, RESET),
     }
@@ -175,11 +188,11 @@ pub fn format_job_status(status: &str) -> String {
 
 /// Format node status with icon
 pub fn format_node_status(status: &str) -> String {
-    match status {
-        "Online" | "Idle" => format!("{}{}● Online{}", GREEN, BOLD, RESET),
-        "Busy" => format!("{}{}● Busy{}", YELLOW, BOLD, RESET),
-        "Offline" => format!("{}{}● Offline{}", RED, BOLD, RESET),
-        _ => format!("{}{}?{}", GRAY, BOLD, RESET),
+    match status.to_lowercase().as_str() {
+        "online" | "idle" => format!("{}{}* Online{}", GREEN, BOLD, RESET),
+        "busy" => format!("{}{}* Busy{}", YELLOW, BOLD, RESET),
+        "offline" | "error" => format!("{}{}* Offline{}", RED, BOLD, RESET),
+        _ => format!("{}{}* {}{}", GRAY, BOLD, status, RESET),
     }
 }
 
@@ -199,22 +212,22 @@ mod tests {
     #[test]
     fn test_progress_bar_zero() {
         let bar = progress_bar(0.0, 100.0, 10);
-        assert!(bar.contains("░"));
-        assert!(!bar.contains("█"));
+        assert!(bar.contains("-"));
+        assert!(!bar.contains("#"));
     }
 
     #[test]
     fn test_progress_bar_full() {
         let bar = progress_bar(100.0, 100.0, 10);
-        assert!(bar.contains("█"));
-        assert!(!bar.contains("░"));
+        assert!(bar.contains("#"));
+        assert!(!bar.contains("-"));
     }
 
     #[test]
     fn test_progress_bar_half() {
         let bar = progress_bar(50.0, 100.0, 10);
-        let filled_count = bar.matches("█").count();
-        let empty_count = bar.matches("░").count();
+        let filled_count = bar.matches("#").count();
+        let empty_count = bar.matches("-").count();
         assert_eq!(filled_count, 5);
         assert_eq!(empty_count, 5);
     }
@@ -222,21 +235,21 @@ mod tests {
     #[test]
     fn test_progress_bar_over_max() {
         let bar = progress_bar(200.0, 100.0, 10);
-        let filled_count = bar.matches("█").count();
+        let filled_count = bar.matches("#").count();
         assert_eq!(filled_count, 10);
     }
 
     #[test]
     fn test_progress_bar_negative() {
         let bar = progress_bar(-10.0, 100.0, 10);
-        let empty_count = bar.matches("░").count();
+        let empty_count = bar.matches("-").count();
         assert_eq!(empty_count, 10);
     }
 
     #[test]
     fn test_progress_bar_zero_max() {
         let bar = progress_bar(0.0, 0.0, 10);
-        let empty_count = bar.matches("░").count();
+        let empty_count = bar.matches("-").count();
         assert_eq!(empty_count, 10);
     }
 
@@ -313,10 +326,10 @@ mod tests {
 
     #[test]
     fn test_status_indicator() {
-        assert!(status_indicator("online").contains("●"));
-        assert!(status_indicator("busy").contains("●"));
-        assert!(status_indicator("offline").contains("●"));
-        assert!(status_indicator("unknown").contains("○"));
+        assert!(status_indicator("online").contains("*"));
+        assert!(status_indicator("busy").contains("*"));
+        assert!(status_indicator("offline").contains("*"));
+        assert!(status_indicator("unknown").contains("o"));
     }
 
     #[test]

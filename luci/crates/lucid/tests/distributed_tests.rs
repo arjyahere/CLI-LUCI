@@ -446,6 +446,7 @@ fn test_node_scoring() {
             os: "linux".to_string(),
             arch: "x86_64".to_string(),
             ip_address: Some("192.168.1.100".to_string()),
+                        mac_address: None,
             created_at: chrono::Utc::now(),
         },
         status: NodeStatus::Idle,

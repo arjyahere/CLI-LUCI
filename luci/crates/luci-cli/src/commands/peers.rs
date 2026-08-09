@@ -26,7 +26,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
                 .and_then(|a| a.as_str())
                 .unwrap_or("unknown");
 
-            println!("  {}{}● {}{}  ({})", display::GREEN, display::BOLD, display::RESET, name, node_id);
+            println!("  {}{}* {}{}  ({})", display::GREEN, display::BOLD, display::RESET, name, node_id);
             println!("    {}Address: {}{}", display::DIM, display::WHITE, addr);
         }
         println!();

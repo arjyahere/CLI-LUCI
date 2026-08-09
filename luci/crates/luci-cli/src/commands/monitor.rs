@@ -23,9 +23,9 @@ pub async fn execute(client: &IpcClient, interval: u64, node: Option<&str>) -> R
 
         if let Some(node_name) = node {
             // Single node view
-            println!("  {}{}┌──────────────────────────────────────────────────────────────┐{}", display::DIM, display::BOLD, display::RESET);
-            println!("  {}{}│                  NODE MONITOR: {:<32}│{}", display::DIM, display::BOLD, node_name, display::RESET);
-            println!("  {}{}└──────────────────────────────────────────────────────────────┘{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}+--------------------------------------------------------------+{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}|                  NODE MONITOR: {:<32}|{}", display::DIM, display::BOLD, node_name, display::RESET);
+            println!("  {}{}+--------------------------------------------------------------+{}", display::DIM, display::BOLD, display::RESET);
             println!();
 
             let response = client.send(IpcCommand::GetDevice { name: node_name.to_string() })?;
@@ -55,9 +55,9 @@ pub async fn execute(client: &IpcClient, interval: u64, node: Option<&str>) -> R
             }
         } else {
             // Cluster view
-            println!("  {}{}┌──────────────────────────────────────────────────────────────┐{}", display::DIM, display::BOLD, display::RESET);
-            println!("  {}{}│                  CLUSTER MONITOR                             │{}", display::DIM, display::BOLD, display::RESET);
-            println!("  {}{}└──────────────────────────────────────────────────────────────┘{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}+--------------------------------------------------------------+{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}|                  CLUSTER MONITOR                             |{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}+--------------------------------------------------------------+{}", display::DIM, display::BOLD, display::RESET);
             println!();
 
             let response = client.send(IpcCommand::GetResources)?;

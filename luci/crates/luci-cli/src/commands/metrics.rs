@@ -34,12 +34,12 @@ pub async fn execute(client: &IpcClient, format: &str) -> Result<()> {
             let bytes_transferred = payload["bytes_transferred"].as_u64().unwrap_or(0);
             let connections = payload["active_connections"].as_u64().unwrap_or(0);
 
-            println!("  {}{}─── Job Metrics ────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}--- Job Metrics --------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
             println!("  {}Submitted:{}    {}{} jobs{}", display::DIM, display::RESET, display::WHITE, jobs_submitted, display::RESET);
             println!("  {}Completed:{}    {}{} jobs{}", display::DIM, display::RESET, display::GREEN, jobs_completed, display::RESET);
             println!("  {}Failed:{}       {}{} jobs{}", display::DIM, display::RESET, display::RED, jobs_failed, display::RESET);
             println!();
-            println!("  {}{}─── Network Metrics ───────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+            println!("  {}{}--- Network Metrics ---------------------------------------{}", display::DIM, display::BOLD, display::RESET);
             println!("  {}Bytes Sent:{}    {}{}{}", display::DIM, display::RESET, display::WHITE, display::format_bytes(bytes_transferred), display::RESET);
             println!("  {}Connections:{}  {}{}{}", display::DIM, display::RESET, display::WHITE, connections, display::RESET);
             println!();

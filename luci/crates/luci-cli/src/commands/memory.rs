@@ -43,9 +43,9 @@ pub async fn list(client: &IpcClient) -> Result<()> {
             return Ok(());
         }
 
-        println!("  {}{}┌──────────────────────────────────────────────────────────────┐{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}│ {:<20} │ {:<10} │ {:<12} │ {:<15} │{}", display::DIM, display::BOLD, "NAME", "SIZE", "PAGES", "ID", display::RESET);
-        println!("  {}{}├──────────────────────────────────────────────────────────────┤{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+--------------------------------------------------------------+{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}| {:<20} | {:<10} | {:<12} | {:<15} |{}", display::DIM, display::BOLD, "NAME", "SIZE", "PAGES", "ID", display::RESET);
+        println!("  {}{}+--------------------------------------------------------------+{}", display::DIM, display::BOLD, display::RESET);
 
         for pool in pools {
             let name = pool["name"].as_str().unwrap_or("unknown");
@@ -53,7 +53,7 @@ pub async fn list(client: &IpcClient) -> Result<()> {
             let size = pool["total_size_gb"].as_f64().unwrap_or(0.0);
             let pages = pool["total_pages"].as_u64().unwrap_or(0);
 
-            println!("  {}│ {:<20} │ {:<10} │ {:<12} │ {:<15} │{}", 
+            println!("  {}| {:<20} | {:<10} | {:<12} | {:<15} |{}", 
                 display::DIM,
                 name,
                 format!("{:.1}GB", size),
@@ -62,7 +62,7 @@ pub async fn list(client: &IpcClient) -> Result<()> {
                 display::RESET);
         }
 
-        println!("  {}{}└──────────────────────────────────────────────────────────────┘{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+--------------------------------------------------------------+{}", display::DIM, display::BOLD, display::RESET);
         println!();
     } else if let Some(msg) = response.error_message() {
         display::print_error(msg);

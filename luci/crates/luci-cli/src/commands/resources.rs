@@ -16,19 +16,19 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         let gpu_count = payload["gpu_count"].as_u64().unwrap_or(0);
         let vram_total = payload["vram_total_gb"].as_str().unwrap_or("0.0").parse::<f64>().unwrap_or(0.0);
 
-        println!("  {}{}╔══════════════════════════════════════════════════════════════╗{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}║                   CLUSTER RESOURCES                          ║{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}╚══════════════════════════════════════════════════════════════╝{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+==============================================================+{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}|                   CLUSTER RESOURCES                          |{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}+==============================================================+{}", display::DIM, display::BOLD, display::RESET);
         println!();
 
         // Overview
-        println!("  {}{}─── Overview ───────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- Overview -----------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!();
         display::print_kv("Devices", &format!("{} connected", devices));
         println!();
 
         // CPU
-        println!("  {}{}─── CPU ────────────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- CPU ----------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!();
         display::print_kv("Total Cores", &cpu_cores.to_string());
         let cpu_bar = display::progress_bar(cpu_cores as f64, 128.0, 40);
@@ -36,7 +36,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         println!();
 
         // Memory
-        println!("  {}{}─── Memory ─────────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- Memory -------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!();
         display::print_kv("Total", &format!("{:.1} GB", ram_total));
         display::print_kv_status("Available", &format!("{:.1} GB", ram_avail), ram_avail > ram_total * 0.25);
@@ -47,7 +47,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         println!();
 
         // GPU
-        println!("  {}{}─── GPU ────────────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- GPU ----------------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!();
         if gpu_count > 0 {
             display::print_kv("GPU Devices", &format!("{} device(s)", gpu_count));
@@ -62,7 +62,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         // Capacity summary
         let capacity = if ram_total > 0.0 { ((ram_avail / ram_total) * 100.0) as u64 } else { 0 };
         let capacity_status = if capacity > 50 { "Healthy" } else if capacity > 25 { "Moderate" } else { "Low" };
-        println!("  {}{}─── Cluster Capacity ──────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- Cluster Capacity --------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!();
         println!("  {}Status:{}        {}{} {}{}", display::DIM, display::RESET, display::status_indicator(capacity_status), display::BRIGHT_GREEN, capacity_status, display::RESET);
         display::print_kv_status("Available", &format!("{}%", capacity), capacity > 25);

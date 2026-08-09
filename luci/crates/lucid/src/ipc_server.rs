@@ -210,16 +210,29 @@ impl IpcServer {
                     .nodes
                     .values()
                     .map(|node| {
+                        let r = node.resources.as_ref();
+                        let connected_ip = daemon.network.peers.get(&node.info.node_id.to_string()).map(|p| p.addr.to_string());
                         serde_json::json!({
                             "node_id": node.info.node_id.to_string(),
                             "name": node.info.name,
+                            "hostname": node.info.hostname,
+                            "os": node.info.os,
+                            "ip": node.info.ip_address,
+                            "mac_address": node.info.mac_address,
+                            "connected_ip": connected_ip,
                             "status": node.status.to_string(),
-                            "cpu_cores": node.resources.as_ref().map(|r| r.cpu.cores).unwrap_or(0),
-                            "cpu_load": node.resources.as_ref().map(|r| r.cpu.load_percent).unwrap_or(0.0),
-                            "ram_total_gb": node.resources.as_ref().map(|r| r.memory.total_gb()).unwrap_or(0.0),
-                            "ram_available_gb": node.resources.as_ref().map(|r| r.memory.available_gb()).unwrap_or(0.0),
-                            "gpu_name": node.resources.as_ref().and_then(|r| r.gpu.as_ref()).map(|g| g.name.clone()),
-                            "vram_total_gb": node.resources.as_ref().and_then(|r| r.gpu.as_ref()).map(|g| g.vram_total_bytes as f64 / (1024.0 * 1024.0 * 1024.0)),
+                            "cpu_cores": r.map(|r| r.cpu.cores).unwrap_or(0),
+                            "cpu_load": r.map(|r| r.cpu.load_percent).unwrap_or(0.0),
+                            "cpu_freq_mhz": r.map(|r| r.cpu.frequency_mhz).unwrap_or(0),
+                            "ram_total_gb": r.map(|r| r.memory.total_gb()).unwrap_or(0.0),
+                            "ram_used_gb": r.map(|r| r.memory.used_gb()).unwrap_or(0.0),
+                            "ram_available_gb": r.map(|r| r.memory.available_gb()).unwrap_or(0.0),
+                            "ram_percent": r.map(|r| r.memory.used_percent()).unwrap_or(0.0),
+                            "disk_total_gb": r.map(|r| r.disk.total_gb()).unwrap_or(0.0),
+                            "disk_free_gb": r.map(|r| r.disk.free_gb()).unwrap_or(0.0),
+                            "gpu_name": r.and_then(|r| r.gpu.as_ref()).map(|g| g.name.clone()),
+                            "gpu_util": r.and_then(|r| r.gpu.as_ref()).map(|g| g.utilization_percent),
+                            "vram_total_gb": r.and_then(|r| r.gpu.as_ref()).map(|g| g.vram_total_bytes as f64 / (1024.0 * 1024.0 * 1024.0)),
                         })
                     })
                     .collect();

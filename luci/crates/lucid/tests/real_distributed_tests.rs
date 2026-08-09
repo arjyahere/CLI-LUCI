@@ -94,6 +94,7 @@ async fn start_test_daemon(
                     os: std::env::consts::OS.to_string(),
                     arch: std::env::consts::ARCH.to_string(),
                     ip_address: Some("127.0.0.1".to_string()),
+                        mac_address: None,
                     created_at: chrono::Utc::now(),
                 },
                 status: NodeStatus::Online,

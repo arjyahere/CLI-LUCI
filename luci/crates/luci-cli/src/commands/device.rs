@@ -25,7 +25,7 @@ pub async fn execute(client: &IpcClient, name: &str) -> Result<()> {
         println!("  {}Status:{}     {}", display::DIM, display::RESET, status_display);
         println!();
         
-        println!("  {}{}─── Resources ──────────────────────────────────────────────{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}--- Resources ----------------------------------------------{}", display::DIM, display::BOLD, display::RESET);
         println!("  {}CPU:{}         {}{} cores (load: {:.1}%){}", display::DIM, display::RESET, display::WHITE, cpu_cores, cpu_load, display::RESET);
         println!("  {}RAM:{}         {}{:.1} GB total, {:.1} GB free{}", display::DIM, display::RESET, display::WHITE, ram_total, ram_avail, display::RESET);
         println!("  {}GPU:{}         {}{}{}", display::DIM, display::RESET, display::WHITE, gpu_name, display::RESET);

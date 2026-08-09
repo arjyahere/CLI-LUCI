@@ -215,6 +215,7 @@ impl NetworkManager {
                                 os: os.clone(),
                                 arch: arch.clone(),
                                 ip_address: Some(addr.ip().to_string()),
+                        mac_address: None,
                                 created_at: chrono::Utc::now(),
                             },
                             status: luci_common::NodeStatus::Online,

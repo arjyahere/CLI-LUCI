@@ -20,9 +20,9 @@ pub async fn execute(client: &IpcClient, invite_code: &str) -> Result<()> {
         println!("  {}You are now connected to the distributed cluster.{}", display::DIM, display::RESET);
         println!();
         println!("  {}Try these commands:{}", display::DIM, display::RESET);
-        println!("    {}luci devices{}       View all nodes in the network", display::CYAN, display::RESET);
-        println!("    {}luci resources{}    See combined cluster resources", display::CYAN, display::RESET);
-        println!("    {}luci run <script>{}  Execute a job on the cluster", display::CYAN, display::RESET);
+        println!("    {}/devices{}       View all nodes in the network", display::CYAN, display::RESET);
+        println!("    {}/resources{}    See combined cluster resources", display::CYAN, display::RESET);
+        println!("    {}/run <script>{}  Execute a job on the cluster", display::CYAN, display::RESET);
         println!();
     } else if let Some(msg) = response.error_message() {
         display::print_error(msg);
