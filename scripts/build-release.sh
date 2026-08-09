@@ -11,3 +11,10 @@ fi
 
 cd "$luci_dir"
 cargo build --release
+
+mkdir -p "$repo_root/dist"
+for bin in luci lucid luci.exe lucid.exe; do
+  src="$luci_dir/target/release/$bin"
+  if [ -f "$src" ]; then cp "$src" "$repo_root/dist/"; fi
+done
+echo "Copied binaries to $repo_root/dist"

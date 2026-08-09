@@ -26,12 +26,12 @@ pub const BRIGHT_CYAN: &str = "\x1b[96m";
 pub fn print_banner() {
     println!();
     println!("{}{}{}", CYAN, BOLD, RESET);
-    println!("  ██╗     ██╗███╗   ███╗██╗  ██╗");
-    println!("  ██║     ██║████╗ ████║██║  ██║");
-    println!("  ██║     ██║██╔████╔██║███████║");
-    println!("  ██║     ██║██║╚██╔╝██║██╔══██║");
-    println!("  ███████╗██║██║ ╚═╝ ██║██║  ██║");
-    println!("  ╚══════╝╚═╝╚═╝     ╚═╝╚═╝  ╚═╝{}{}", BOLD, RESET);
+    println!("  ██╗     ██╗   ██╗ ██████╗██╗");
+    println!("  ██║     ██║   ██║██╔════╝██║");
+    println!("  ██║     ██║   ██║██║     ██║");
+    println!("  ██║     ██║   ██║██║     ██║");
+    println!("  ███████╗╚██████╔╝╚██████╗██║");
+    println!("  ╚══════╝ ╚═════╝  ╚═════╝╚═╝{}{}", BOLD, RESET);
     println!();
     println!("  {}{}One Runtime. Infinite Resources.{}", DIM, ITALIC, RESET);
     println!();

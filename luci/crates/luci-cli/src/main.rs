@@ -226,8 +226,41 @@ enum ProxyCommands {
     Status,
 }
 
+fn pause_if_own_console() {
+    #[cfg(windows)]
+    {
+        unsafe extern "system" {
+            fn GetConsoleProcessList(process_list: *mut u32, count: u32) -> u32;
+        }
+        let mut list = [0u32; 2];
+        let count = unsafe { GetConsoleProcessList(list.as_mut_ptr(), 2) };
+        if count == 1 {
+            eprintln!("\nPress Enter to exit...");
+            let mut input = String::new();
+            let _ = std::io::stdin().read_line(&mut input);
+        }
+    }
+}
+
 #[tokio::main]
-async fn main() -> anyhow::Result<()> {
+async fn main() {
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        default_hook(info);
+        pause_if_own_console();
+    }));
+    let code = match run().await {
+        Ok(code) => code,
+        Err(e) => {
+            eprintln!("Error: {e:#}");
+            1
+        }
+    };
+    pause_if_own_console();
+    std::process::exit(code);
+}
+
+async fn run() -> anyhow::Result<i32> {
     tracing_subscriber::fmt()
         .with_env_filter(
             tracing_subscriber::EnvFilter::try_from_default_env()
@@ -235,7 +268,13 @@ async fn main() -> anyhow::Result<()> {
         )
         .init();
 
-    let cli = Cli::parse();
+    let cli = match Cli::try_parse() {
+        Ok(cli) => cli,
+        Err(e) => {
+            e.print().ok();
+            return Ok(e.exit_code());
+        }
+    };
 
     let port = cli.port.unwrap_or_else(|| {
         Config::load()
@@ -245,7 +284,7 @@ async fn main() -> anyhow::Result<()> {
 
     let client = IpcClient::new(port);
 
-    match cli.command {
+    let result: anyhow::Result<()> = match cli.command {
         Commands::Create { name } => commands::create::execute(&client, &name).await,
         Commands::Join { invite_code } => commands::join::execute(&client, &invite_code).await,
         Commands::Leave { name } => commands::leave::execute(&client, name.as_deref()).await,
@@ -305,5 +344,7 @@ async fn main() -> anyhow::Result<()> {
         Commands::Peers => commands::peers::execute(&client).await,
         Commands::Health => commands::health::execute(&client).await,
         Commands::Metrics { format } => commands::metrics::execute(&client, &format).await,
-    }
+    };
+    result?;
+    Ok(0)
 }

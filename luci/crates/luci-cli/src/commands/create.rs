@@ -22,14 +22,14 @@ pub async fn execute(client: &IpcClient, name: &str) -> Result<()> {
         println!();
 
         println!("  {}{}┌──────────────────────────────────────────────────────────────┐{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}│                    NETWORK INFO                              │{}", display::DIM, display::BOLD, display::RESET);
+        println!("  {}{}│                        NETWORK INFO                          │{}", display::DIM, display::BOLD, display::RESET);
         println!("  {}{}├──────────────────────────────────────────────────────────────┤{}", display::DIM, display::BOLD, display::RESET);
         println!("  {}{}│                                                              │{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}│  {}Network:{}     {:<46}│{}", display::DIM, display::BOLD, display::RESET, display::CYAN, name, display::RESET);
-        println!("  {}{}│  {}Network ID:{}  {:<46}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, network_id, display::RESET);
+        println!("  {}{}│  {}Network:{}     {:<47}│{}", display::DIM, display::BOLD, display::RESET, display::CYAN, name, display::RESET);
+        println!("  {}{}│  {}Network ID:{}  {:<47}│{}", display::DIM, display::BOLD, display::RESET, display::DIM, network_id, display::RESET);
         println!("  {}{}│                                                              │{}", display::DIM, display::BOLD, display::RESET);
-        println!("  {}{}│  {}Invite Code:{}                                           │{}", display::DIM, display::BOLD, display::RESET, display::DIM, display::RESET);
-        println!("  {}{}│  {}{}{:<52}{}│{}", display::DIM, display::BOLD, display::RESET, display::BRIGHT_YELLOW, invite_code, display::DIM, display::RESET);
+        println!("  {}{}│  {}Invite Code:{}                                                │{}", display::DIM, display::BOLD, display::RESET, display::DIM, display::RESET);
+        println!("  {}{}│  {}{}{:<60}{}│{}", display::DIM, display::BOLD, display::RESET, display::BRIGHT_YELLOW, invite_code, display::DIM, display::RESET);
         println!("  {}{}│                                                              │{}", display::DIM, display::BOLD, display::RESET);
         println!("  {}{}└──────────────────────────────────────────────────────────────┘{}", display::DIM, display::BOLD, display::RESET);
         println!();

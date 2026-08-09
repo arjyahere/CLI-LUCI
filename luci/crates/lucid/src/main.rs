@@ -6,8 +6,45 @@ use luci_common::Config;
 use tracing_subscriber::prelude::*;
 use tracing_subscriber::Layer;
 
+fn pause_if_own_console() {
+    #[cfg(windows)]
+    {
+        unsafe extern "system" {
+            fn GetConsoleProcessList(process_list: *mut u32, count: u32) -> u32;
+        }
+        let mut list = [0u32; 2];
+        let count = unsafe { GetConsoleProcessList(list.as_mut_ptr(), 2) };
+        if count == 1 {
+            eprintln!("\nPress Enter to exit...");
+            let mut input = String::new();
+            let _ = std::io::stdin().read_line(&mut input);
+        }
+    }
+}
+
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() {
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        default_hook(info);
+        pause_if_own_console();
+    }));
+    let code = match run().await {
+        Ok(()) => 0,
+        Err(e) => {
+            eprintln!("Error: {e:#}");
+            1
+        }
+    };
+    pause_if_own_console();
+    std::process::exit(code);
+}
+
+async fn run() -> Result<()> {
+    rustls::crypto::ring::default_provider()
+        .install_default()
+        .ok();
+
     let config = Config::load()?;
     config.ensure_dirs()?;
 

@@ -1,6 +1,9 @@
 # Rust / Cargo
 **/target/
 
+# Build/distribution output
+dist/
+
 # Graphify generated output
 graphify-out/
 
