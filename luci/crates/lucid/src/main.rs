@@ -1,0 +1,93 @@
+pub mod daemon;
+pub mod ipc_server;
+
+use anyhow::Result;
+use luci_common::Config;
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::Layer;
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let config = Config::load()?;
+    config.ensure_dirs()?;
+
+    let file_appender = tracing_appender::rolling::never(config.data_dir(), "lucid.log");
+    let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
+
+    let env_filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
+
+    let file_layer = tracing_subscriber::fmt::layer()
+        .with_writer(non_blocking)
+        .with_filter(env_filter.clone());
+
+    let stdout_layer = tracing_subscriber::fmt::layer()
+        .with_filter(env_filter);
+
+    tracing_subscriber::registry()
+        .with(stdout_layer)
+        .with(file_layer)
+        .init();
+
+    tracing::info!("Starting lucid daemon...");
+    tracing::info!("Node ID: {}", config.node_id);
+    tracing::info!("Port: {}", config.daemon_port);
+
+    // Auto-configure firewall on Windows
+    #[cfg(target_os = "windows")]
+    setup_firewall(&config);
+
+    let daemon = daemon::Daemon::new(config).await?;
+    
+    tracing::info!("Daemon started (PID: {})", std::process::id());
+
+    // Run daemon
+    daemon.run().await?;
+
+    Ok(())
+}
+
+#[cfg(target_os = "windows")]
+fn setup_firewall(config: &Config) {
+    use std::process::Command;
+
+    let exe_path = std::env::current_exe().unwrap_or_default();
+    let exe_str = exe_path.to_string_lossy();
+    let node_port = config.node_port.to_string();
+    let discovery_port = config.discovery_port.to_string();
+
+    let rules = [
+        ("Luci Daemon Inbound", "inbound", &node_port, "TCP"),
+        ("Luci Discovery Inbound", "inbound", &discovery_port, "UDP"),
+        ("Luci Daemon Outbound", "outbound", &node_port, "TCP"),
+        ("Luci Discovery Outbound", "outbound", &discovery_port, "UDP"),
+    ];
+
+    for (name, dir, port, proto) in &rules {
+        match Command::new("netsh")
+            .args([
+                "advfirewall", "firewall", "add", "rule",
+                "name=", name,
+                "dir=", dir,
+                "action=", "allow",
+                "program=", &exe_str,
+                "protocol=", proto,
+                if *dir == "inbound" { "localport" } else { "remoteport" }, port,
+                "profile=", "private",
+            ])
+            .output()
+        {
+            Ok(output) => {
+                if !output.status.success() {
+                    let stderr = String::from_utf8_lossy(&output.stderr);
+                    tracing::warn!("Failed to add firewall rule '{}': {}", name, stderr.trim());
+                }
+            }
+            Err(e) => {
+                tracing::warn!("Failed to run netsh for rule '{}': {}", name, e);
+            }
+        }
+    }
+
+    tracing::info!("Firewall rules configured");
+}

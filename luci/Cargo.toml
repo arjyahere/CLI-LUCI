@@ -1,0 +1,114 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/luci-common",
+    "crates/luci-cli",
+    "crates/lucid",
+    "crates/luci-protocol",
+    "crates/luci-runtime",
+    "sdks/rust",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Luci Contributors"]
+license = "MIT"
+description = "One Runtime. Infinite Resources."
+
+[workspace.dependencies]
+# Internal crates
+luci-common = { path = "crates/luci-common" }
+luci-protocol = { path = "crates/luci-protocol" }
+luci-runtime = { path = "crates/luci-runtime" }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+bincode = { version = "2", features = ["serde"] }
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+tracing-appender = "0.2"
+
+# System information
+sysinfo = "0.31"
+
+# Unique IDs
+uuid = { version = "1", features = ["v4", "serde"] }
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Error handling
+anyhow = "1"
+thiserror = "1"
+
+# Config directory
+dirs = "5"
+
+# Hashing
+sha2 = "0.10"
+hex = "0.4"
+blake3 = "1"
+base64 = "0.22"
+
+# Hostname
+hostname = "0.4"
+
+# Networking
+tokio-util = { version = "0.7", features = ["codec"] }
+
+# Async traits
+async-trait = "0.1"
+
+# Bytes
+bytes = "1"
+
+# Futures
+futures = "0.3"
+
+# === TLS & Security ===
+rustls = { version = "0.23", default-features = false, features = ["std", "ring"] }
+tokio-rustls = { version = "0.26", features = ["ring"] }
+rustls-pemfile = "2"
+rcgen = "0.13"
+ed25519-dalek = "2"
+jsonwebtoken = "9"
+
+# === Compression ===
+lz4_flex = "0.11"
+
+# === Connection Management ===
+deadpool = { version = "0.13", features = ["managed", "rt_tokio_1"] }
+dashmap = "6"
+governor = "0.8"
+
+# === HTTP / Reverse Proxy ===
+hyper = { version = "1", features = ["full"] }
+hyper-util = { version = "0.1", features = ["full"] }
+http-body-util = "0.1"
+axum = { version = "0.8", features = ["macros"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["trace", "cors", "compression-gzip", "limit", "timeout"] }
+
+# === Observability ===
+metrics = "0.24"
+metrics-exporter-prometheus = "0.16"
+
+# === Persistence ===
+sled = "0.34"
+
+# === HTTP Client ===
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+
+# === Random ===
+rand = "0.8"

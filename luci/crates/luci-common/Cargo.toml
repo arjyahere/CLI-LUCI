@@ -1,0 +1,23 @@
+[package]
+name = "luci-common"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+dirs.workspace = true
+sha2.workspace = true
+hex.workspace = true
+hostname.workspace = true
+rand.workspace = true
+ed25519-dalek.workspace = true
+rustls.workspace = true
+rustls-pemfile.workspace = true
+rcgen.workspace = true
+tracing.workspace = true
+jsonwebtoken.workspace = true
