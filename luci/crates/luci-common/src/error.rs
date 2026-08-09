@@ -13,7 +13,7 @@ pub enum Error {
     #[error("JSON error: {0}")]
     Json(#[from] serde_json::Error),
 
-    #[error("Daemon not running. Start with: lucid start")]
+    #[error("Daemon not running. Start with: luci start")]
     DaemonNotRunning,
 
     #[error("Daemon already running (PID: {0})")]

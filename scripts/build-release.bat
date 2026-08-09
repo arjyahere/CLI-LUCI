@@ -11,11 +11,10 @@ if errorlevel 1 (
 )
 
 cd /d "%luci_dir%" || exit /b 1
-cargo build --release
+cargo build --release -p luci
 if errorlevel 1 exit /b %errorlevel%
 
 if not exist "%repo_root%\dist" mkdir "%repo_root%\dist"
 copy /y "%luci_dir%\target\release\luci.exe" "%repo_root%\dist\" >nul
-copy /y "%luci_dir%\target\release\lucid.exe" "%repo_root%\dist\" >nul
-echo Copied binaries to "%repo_root%\dist"
+echo Copied luci.exe to "%repo_root%\dist"
 exit /b 0

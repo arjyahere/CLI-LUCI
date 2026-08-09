@@ -36,7 +36,7 @@ pub async fn execute(client: &IpcClient, name: &str) -> Result<()> {
 
         println!("  {}{}Share this invite code with others to join your network:{}", display::DIM, display::BOLD, display::RESET);
         println!();
-        println!("    {}luci join {}{}{}", display::CYAN, display::BRIGHT_YELLOW, invite_code, display::RESET);
+        println!("    {}/join {}{}{}", display::CYAN, display::BRIGHT_YELLOW, invite_code, display::RESET);
         println!();
     } else if let Some(msg) = response.error_message() {
         display::print_error(msg);

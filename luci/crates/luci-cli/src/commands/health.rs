@@ -15,7 +15,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
         let uptime = payload["uptime_secs"].as_u64().unwrap_or(0);
         let uptime_str = display::format_duration(uptime);
 
-        let status_display = if status == "healthy" {
+        let status_display = if status == "healthy" || status == "ok" {
             format!("{}{}● Healthy{}", display::BRIGHT_GREEN, display::BOLD, display::RESET)
         } else {
             format!("{}{}● Unhealthy{}", display::BRIGHT_RED, display::BOLD, display::RESET)

@@ -891,6 +891,50 @@ impl IpcServer {
                     "prometheus": prometheus_output,
                 }))
             }
+
+            IpcCommand::ShowDaemonWindow => {
+                #[cfg(windows)]
+                {
+                    unsafe extern "system" {
+                        fn GetConsoleWindow() -> *mut std::ffi::c_void;
+                        fn ShowWindow(hwnd: *mut std::ffi::c_void, n_cmd_show: i32) -> i32;
+                        fn AllocConsole() -> i32;
+                    }
+                    const SW_SHOW: i32 = 5;
+                    unsafe {
+                        let hwnd = GetConsoleWindow();
+                        if hwnd.is_null() {
+                            AllocConsole();
+                        } else {
+                            ShowWindow(hwnd, SW_SHOW);
+                        }
+                    }
+                }
+                IpcResponse::ok()
+            }
+
+            IpcCommand::HideDaemonWindow => {
+                #[cfg(windows)]
+                {
+                    unsafe extern "system" {
+                        fn GetConsoleWindow() -> *mut std::ffi::c_void;
+                        fn ShowWindow(hwnd: *mut std::ffi::c_void, n_cmd_show: i32) -> i32;
+                    }
+                    const SW_HIDE: i32 = 0;
+                    unsafe {
+                        let hwnd = GetConsoleWindow();
+                        if !hwnd.is_null() {
+                            ShowWindow(hwnd, SW_HIDE);
+                        }
+                    }
+                }
+                IpcResponse::ok()
+            }
+
+            IpcCommand::Shutdown => {
+                state.read().await.shutdown_notify.notify_waiters();
+                IpcResponse::ok()
+            }
         }
     }
 

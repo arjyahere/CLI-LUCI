@@ -10,11 +10,11 @@ if ! command -v cargo >/dev/null 2>&1; then
 fi
 
 cd "$luci_dir"
-cargo build --release
+cargo build --release -p luci
 
 mkdir -p "$repo_root/dist"
-for bin in luci lucid luci.exe lucid.exe; do
+for bin in luci luci.exe; do
   src="$luci_dir/target/release/$bin"
   if [ -f "$src" ]; then cp "$src" "$repo_root/dist/"; fi
 done
-echo "Copied binaries to $repo_root/dist"
+echo "Copied luci to $repo_root/dist"

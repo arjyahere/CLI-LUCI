@@ -12,30 +12,19 @@ pub async fn start(client: &IpcClient) -> Result<()> {
         return Ok(());
     }
 
-    println!("  {}Starting lucid daemon...{}", display::DIM, display::RESET);
+    println!("  {}Starting daemon...{}", display::DIM, display::RESET);
+    spawn_self_daemon()?;
 
-    #[cfg(windows)]
-    {
-        Command::new("cmd")
-            .args(["/C", "start", "lucid"])
-            .spawn()?;
+    for _ in 0..30 {
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+        if client.is_daemon_running() {
+            display::print_success("Daemon started successfully.");
+            println!();
+            return Ok(());
+        }
     }
 
-    #[cfg(not(windows))]
-    {
-        Command::new("lucid")
-            .spawn()?;
-    }
-
-    // Wait for daemon to start
-    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
-
-    if client.is_daemon_running() {
-        display::print_success("Daemon started successfully.");
-    } else {
-        display::print_warning("Daemon started but not yet responding.");
-    }
-
+    display::print_warning("Daemon started but not yet responding.");
     println!();
     Ok(())
 }
@@ -49,31 +38,19 @@ pub async fn stop(client: &IpcClient) -> Result<()> {
         return Ok(());
     }
 
-    println!("  {}Stopping lucid daemon...{}", display::DIM, display::RESET);
+    println!("  {}Stopping daemon...{}", display::DIM, display::RESET);
+    let _ = client.send(luci_common::IpcCommand::Shutdown);
 
-    #[cfg(windows)]
-    {
-        Command::new("cmd")
-            .args(["/C", "taskkill", "/IM", "lucid.exe", "/F"])
-            .spawn()?;
+    for _ in 0..30 {
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+        if !client.is_daemon_running() {
+            display::print_success("Daemon stopped successfully.");
+            println!();
+            return Ok(());
+        }
     }
 
-    #[cfg(not(windows))]
-    {
-        Command::new("pkill")
-            .arg("lucid")
-            .spawn()?;
-    }
-
-    // Wait for daemon to stop
-    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
-
-    if !client.is_daemon_running() {
-        display::print_success("Daemon stopped successfully.");
-    } else {
-        display::print_warning("Daemon may still be running.");
-    }
-
+    display::print_warning("Daemon may still be running.");
     println!();
     Ok(())
 }
@@ -81,55 +58,45 @@ pub async fn stop(client: &IpcClient) -> Result<()> {
 pub async fn restart(client: &IpcClient) -> Result<()> {
     display::print_header("RESTARTING DAEMON");
 
-    if !client.is_daemon_running() {
-        display::print_warning("Daemon is not running. Starting...");
-        println!();
-        return start(client).await;
+    if client.is_daemon_running() {
+        println!("  {}Stopping daemon...{}", display::DIM, display::RESET);
+        let _ = client.send(luci_common::IpcCommand::Shutdown);
+        for _ in 0..30 {
+            tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+            if !client.is_daemon_running() { break; }
+        }
     }
-
-    println!("  {}Stopping daemon...{}", display::DIM, display::RESET);
-
-    #[cfg(windows)]
-    {
-        Command::new("cmd")
-            .args(["/C", "taskkill", "/IM", "lucid.exe", "/F"])
-            .spawn()?;
-    }
-
-    #[cfg(not(windows))]
-    {
-        Command::new("pkill")
-            .arg("lucid")
-            .spawn()?;
-    }
-
-    // Wait for daemon to stop
-    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
 
     println!("  {}Starting daemon...{}", display::DIM, display::RESET);
+    spawn_self_daemon()?;
 
+    for _ in 0..30 {
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+        if client.is_daemon_running() {
+            display::print_success("Daemon restarted successfully.");
+            println!();
+            return Ok(());
+        }
+    }
+
+    display::print_warning("Daemon restarted but not yet responding.");
+    println!();
+    Ok(())
+}
+
+fn spawn_self_daemon() -> Result<()> {
+    let exe = std::env::current_exe()?;
+    let mut cmd = Command::new(exe);
+    cmd.arg("--internal-daemon").arg("--hidden");
     #[cfg(windows)]
     {
-        Command::new("cmd")
-            .args(["/C", "start", "lucid"])
-            .spawn()?;
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        cmd.creation_flags(CREATE_NO_WINDOW);
     }
-
-    #[cfg(not(windows))]
-    {
-        Command::new("lucid")
-            .spawn()?;
-    }
-
-    // Wait for daemon to start
-    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
-
-    if client.is_daemon_running() {
-        display::print_success("Daemon restarted successfully.");
-    } else {
-        display::print_warning("Daemon restarted but not yet responding.");
-    }
-
-    println!();
+    cmd.stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null());
+    cmd.spawn()?;
     Ok(())
 }

@@ -79,6 +79,13 @@ pub enum IpcCommand {
     GetHealth,
     GetMetrics,
     GetPrometheusMetrics,
+
+    // Window control
+    ShowDaemonWindow,
+    HideDaemonWindow,
+
+    // Daemon lifecycle
+    Shutdown,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

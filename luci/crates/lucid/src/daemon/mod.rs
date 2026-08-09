@@ -57,6 +57,7 @@ pub struct DaemonState {
     pub auth_manager: Option<luci_common::auth::AuthManager>,
     pub peer_auth: HashMap<String, luci_common::auth::PeerAuth>,
     pub audit_logger: audit::AuditLogger,
+    pub shutdown_notify: Arc<tokio::sync::Notify>,
 }
 
 #[derive(Clone, Debug)]
@@ -145,6 +146,7 @@ impl DaemonState {
             auth_manager: None,
             peer_auth: HashMap::new(),
             audit_logger: audit::AuditLogger::new(node_id.to_string(), 10000),
+            shutdown_notify: Arc::new(tokio::sync::Notify::new()),
         }
     }
 
@@ -613,7 +615,11 @@ impl Daemon {
         }
 
         // Wait for shutdown signal
-        tokio::signal::ctrl_c().await?;
+        let shutdown_notify = { daemon.state.read().await.shutdown_notify.clone() };
+        tokio::select! {
+            _ = tokio::signal::ctrl_c() => {},
+            _ = shutdown_notify.notified() => {},
+        }
 
         tracing::info!("Shutting down daemon...");
 

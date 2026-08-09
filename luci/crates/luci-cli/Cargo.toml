@@ -9,6 +9,7 @@ path = "src/main.rs"
 
 [dependencies]
 luci-common.workspace = true
+lucid = { path = "../lucid" }
 clap.workspace = true
 tokio.workspace = true
 tracing.workspace = true
@@ -17,3 +18,7 @@ serde.workspace = true
 serde_json.workspace = true
 anyhow.workspace = true
 chrono.workspace = true
+rustls.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+tray-icon = "0.21"

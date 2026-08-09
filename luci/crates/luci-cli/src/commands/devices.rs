@@ -22,7 +22,7 @@ pub async fn execute(client: &IpcClient) -> Result<()> {
             display::print_warning("No devices found in the network.");
             println!("  {}Get started:{}", display::DIM, display::RESET);
             println!("    {}luci create <name>{}    Create a new network", display::CYAN, display::RESET);
-            println!("    {}luci join <code>{}     Join an existing network", display::CYAN, display::RESET);
+            println!("    {}/join <code>{}     Join an existing network", display::CYAN, display::RESET);
             println!();
             return Ok(());
         }
